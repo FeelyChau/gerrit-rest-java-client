@@ -19,9 +19,12 @@ package com.urswolfer.gerrit.client.rest.http.projects;
 import com.google.common.collect.Iterables;
 import com.google.gerrit.extensions.api.projects.TagApi;
 import com.google.gerrit.extensions.api.projects.TagInfo;
+import com.google.gerrit.extensions.api.projects.TagInput;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gson.JsonElement;
 import com.urswolfer.gerrit.client.rest.http.GerritRestClient;
+
+import java.util.List;
 
 /**
  * @author Pavel Bely
@@ -46,6 +49,18 @@ public class TagApiRestClient extends TagApi.NotImplemented implements TagApi {
     public TagInfo get() throws RestApiException {
         JsonElement jsonElement = gerritRestClient.getRequest(tagUrl());
         return Iterables.getOnlyElement(tagInfoParser.parseTagInfos(jsonElement));
+    }
+
+    @Override
+    public TagApi create(TagInput in) throws RestApiException {
+        String body = gerritRestClient.getGson().toJson(in);
+        gerritRestClient.putRequest(tagUrl(), body);
+        return this;
+    }
+
+    @Override
+    public void delete() throws RestApiException {
+        gerritRestClient.deleteRequest(tagUrl());
     }
 
     protected String tagUrl() {

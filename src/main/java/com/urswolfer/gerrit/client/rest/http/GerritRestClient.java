@@ -196,6 +196,7 @@ public class GerritRestClient implements RestClient {
         HttpContext httpContext = new BasicHttpContext();
         HttpClientBuilder client = getHttpClient(httpContext);
 
+        httpContext.setAttribute("http.request-config", RequestConfig.custom().setNormalizeUri(false).build());
         Optional<String> gerritAuthOptional = updateGerritAuthWhenRequired(httpContext, client);
 
         String uri = authData.getHost();
