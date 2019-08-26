@@ -57,7 +57,8 @@ public class TagApiRestClientTest {
         TagInfoParser tagInfoParser = new TagInfoParserBuilder()
                 .expectParseTagInfos(MOCK_JSON_ELEMENT, mockTags)
                 .get();
-        ProjectApiRestClient projectApiRestClient = new ProjectApiRestClient(gerritRestClient, projectsParser, branchInfoParser, tagInfoParser, projectName);
+        ProjectApiRestClient projectApiRestClient = new ProjectApiRestClient(gerritRestClient, projectsParser,
+            branchInfoParser, tagInfoParser, null, projectName);
 
         List<TagInfo> tags = projectApiRestClient.tags()
                 .withLimit(3)
@@ -83,7 +84,8 @@ public class TagApiRestClientTest {
         TagInfoParser tagInfoParser = new TagInfoParserBuilder()
                 .expectParseTagInfos(MOCK_JSON_ELEMENT, mockTags)
                 .get();
-        ProjectApiRestClient projectApiRestClient = new ProjectApiRestClient(gerritRestClient, projectsParser, branchInfoParser, tagInfoParser, projectName);
+        ProjectApiRestClient projectApiRestClient = new ProjectApiRestClient(gerritRestClient, projectsParser,
+            branchInfoParser, tagInfoParser, null, projectName);
 
         TagInfo tags = projectApiRestClient.tag("v0.0.1")
                 .get();

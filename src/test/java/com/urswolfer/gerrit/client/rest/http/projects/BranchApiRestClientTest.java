@@ -54,7 +54,7 @@ public class BranchApiRestClientTest {
             .expectPut("/projects/sandbox/branches/some-feature", "{}", MOCK_JSON_ELEMENT)
             .expectGetGson()
             .get();
-        ProjectsRestClient projectsRestClient = new ProjectsRestClient(gerritRestClient, null, null, null);
+        ProjectsRestClient projectsRestClient = new ProjectsRestClient(gerritRestClient, null, null, null, null);
 
         projectsRestClient.name("sandbox").branch("some-feature").create(new BranchInput());
     }
@@ -69,7 +69,7 @@ public class BranchApiRestClientTest {
         BranchInfoParser branchInfoParser = new BranchInfoParserBuilder()
             .expectParseBranchInfos(MOCK_JSON_ELEMENT, Collections.singletonList(MOCK_BRANCH_INFO))
             .get();
-        ProjectsRestClient projectsRestClient = new ProjectsRestClient(gerritRestClient, projectsParser, branchInfoParser, null);
+        ProjectsRestClient projectsRestClient = new ProjectsRestClient(gerritRestClient, projectsParser, branchInfoParser, null, null);
 
         BranchInfo branchInfo = projectsRestClient.name(projectName).branch("master").get();
 
@@ -82,7 +82,7 @@ public class BranchApiRestClientTest {
         GerritRestClient gerritRestClient = new GerritRestClientBuilder()
             .expectDelete("/projects/sandbox/branches/some-feature")
             .get();
-        ProjectsRestClient projectsRestClient = new ProjectsRestClient(gerritRestClient, null, null, null);
+        ProjectsRestClient projectsRestClient = new ProjectsRestClient(gerritRestClient, null, null, null, null);
 
         projectsRestClient.name("sandbox").branch("some-feature").delete();
     }
@@ -107,7 +107,7 @@ public class BranchApiRestClientTest {
             .expectRequest(requestUrl, null, GerritRestClient.HttpVerb.GET, httpResponse)
             .get();
 
-        BranchApiRestClient branchApiRestClient = new BranchApiRestClient(gerritRestClient, null, projectApiRestClient, "master");
+        BranchApiRestClient branchApiRestClient = new BranchApiRestClient(gerritRestClient, null, null, projectApiRestClient, "master");
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         BinaryResult binaryResult = branchApiRestClient.file(FILE_PATH);
         try {

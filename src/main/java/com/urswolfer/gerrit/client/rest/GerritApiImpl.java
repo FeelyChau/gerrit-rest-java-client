@@ -33,10 +33,7 @@ import com.urswolfer.gerrit.client.rest.http.changes.*;
 import com.urswolfer.gerrit.client.rest.http.config.ConfigRestClient;
 import com.urswolfer.gerrit.client.rest.http.groups.GroupsParser;
 import com.urswolfer.gerrit.client.rest.http.groups.GroupsRestClient;
-import com.urswolfer.gerrit.client.rest.http.projects.BranchInfoParser;
-import com.urswolfer.gerrit.client.rest.http.projects.ProjectsParser;
-import com.urswolfer.gerrit.client.rest.http.projects.ProjectsRestClient;
-import com.urswolfer.gerrit.client.rest.http.projects.TagInfoParser;
+import com.urswolfer.gerrit.client.rest.http.projects.*;
 import com.urswolfer.gerrit.client.rest.http.tools.ToolsRestClient;
 import com.urswolfer.gerrit.client.rest.tools.Tools;
 
@@ -92,7 +89,9 @@ public class GerritApiImpl extends GerritApi.NotImplemented implements GerritRes
                     gerritRestClient,
                     new ProjectsParser(gerritRestClient.getGson()),
                     new BranchInfoParser(gerritRestClient.getGson()),
-                    new TagInfoParser(gerritRestClient.getGson()));
+                    new TagInfoParser(gerritRestClient.getGson()),
+                    new ReflogParser(gerritRestClient.getGson()),
+                    new CommitInfoParser(gerritRestClient.getGson()));
         }
     });
 

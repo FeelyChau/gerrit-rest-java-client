@@ -19,10 +19,7 @@ package com.urswolfer.gerrit.client.rest.http.projects;
 import com.google.common.base.Function;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
-import com.google.gerrit.extensions.api.projects.BranchInfo;
-import com.google.gerrit.extensions.api.projects.ProjectInput;
-import com.google.gerrit.extensions.api.projects.Projects;
-import com.google.gerrit.extensions.api.projects.TagInfo;
+import com.google.gerrit.extensions.api.projects.*;
 import com.google.gerrit.extensions.common.ProjectInfo;
 import com.google.gson.JsonElement;
 import com.urswolfer.gerrit.client.rest.http.GerritRestClient;
@@ -96,6 +93,7 @@ public class ProjectsRestClientTest {
         private ProjectsParser projectsParser;
         private BranchInfoParser branchInfoParser;
         private TagInfoParser tagInfoParser;
+        private ReflogParser reflogParser;
 
         public ProjectListTestCase withListParameter(TestListRequest listParameter) {
             this.listParameter = listParameter;
@@ -123,7 +121,8 @@ public class ProjectsRestClientTest {
                     setupGerritRestClient(),
                     setupProjectsParser(),
                     setupBranchInfoParser(),
-                    setupTagInfoParser()
+                    setupTagInfoParser(),
+                    setupReflogParser()
             );
         }
 
@@ -157,10 +156,19 @@ public class ProjectsRestClientTest {
         public TagInfoParser setupTagInfoParser() throws Exception {
             tagInfoParser = EasyMock.createMock(TagInfoParser.class);
             EasyMock.expect(tagInfoParser.parseTagInfos(mockJsonElement))
-                    .andReturn(Lists.<TagInfo>newArrayList())
-                    .once();
+                .andReturn(Lists.<TagInfo>newArrayList())
+                .once();
             EasyMock.replay(tagInfoParser);
             return tagInfoParser;
+        }
+
+        public ReflogParser setupReflogParser() throws Exception {
+            reflogParser = EasyMock.createMock(ReflogParser.class);
+            EasyMock.expect(reflogParser.parseRefLogs(mockJsonElement))
+                .andReturn(Lists.<ReflogEntryInfo>newArrayList())
+                .once();
+            EasyMock.replay(reflogParser);
+            return reflogParser;
         }
 
         @Override
@@ -259,7 +267,8 @@ public class ProjectsRestClientTest {
                     setupGerritRestClient(),
                     setupProjectsParser(),
                     setupBranchInfoParser(),
-                    setupTagInfoParser()
+                    setupTagInfoParser(),
+                    null
             );
         }
 

@@ -19,18 +19,14 @@ package com.urswolfer.gerrit.client.rest.http.projects;
 import com.google.common.base.Strings;
 import com.google.gerrit.extensions.api.access.ProjectAccessInfo;
 import com.google.gerrit.extensions.api.access.ProjectAccessInput;
-import com.google.gerrit.extensions.api.projects.BranchApi;
-import com.google.gerrit.extensions.api.projects.BranchInfo;
-import com.google.gerrit.extensions.api.projects.ProjectApi;
-import com.google.gerrit.extensions.api.projects.ProjectInput;
-import com.google.gerrit.extensions.api.projects.TagApi;
-import com.google.gerrit.extensions.api.projects.TagInfo;
+import com.google.gerrit.extensions.api.projects.*;
 import com.google.gerrit.extensions.common.ProjectInfo;
 import com.google.gerrit.extensions.restapi.NotImplementedException;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.Url;
 import com.google.gson.JsonElement;
 import com.urswolfer.gerrit.client.rest.http.GerritRestClient;
+import com.urswolfer.gerrit.client.rest.http.changes.CommitInfoParser;
 import com.urswolfer.gerrit.client.rest.http.util.UrlUtils;
 
 import java.util.List;
@@ -43,17 +39,23 @@ public class ProjectApiRestClient extends ProjectApi.NotImplemented implements P
     private final ProjectsParser projectsParser;
     private final BranchInfoParser branchInfoParser;
     private final TagInfoParser tagInfoParser;
+    private final ReflogParser refLogParser;
+    private final CommitInfoParser commitInfoParser;
     private final String name;
 
     public ProjectApiRestClient(GerritRestClient gerritRestClient,
                                 ProjectsParser projectsParser,
                                 BranchInfoParser branchInfoParser,
                                 TagInfoParser tagInfoParser,
+                                ReflogParser refLogParser,
+                                CommitInfoParser commitInfoParser,
                                 String name) {
         this.gerritRestClient = gerritRestClient;
         this.projectsParser = projectsParser;
         this.branchInfoParser = branchInfoParser;
         this.tagInfoParser = tagInfoParser;
+        this.refLogParser = refLogParser;
+        this.commitInfoParser = commitInfoParser;
         this.name = name;
     }
 
@@ -92,7 +94,7 @@ public class ProjectApiRestClient extends ProjectApi.NotImplemented implements P
 
     @Override
     public BranchApi branch(String ref) throws RestApiException {
-        return new BranchApiRestClient(gerritRestClient, branchInfoParser, this, ref);
+        return new BranchApiRestClient(gerritRestClient, branchInfoParser, refLogParser, this, ref);
     }
 
     private List<BranchInfo> getBranches(ListRefsRequest<BranchInfo> lbr) throws RestApiException {
@@ -116,6 +118,10 @@ public class ProjectApiRestClient extends ProjectApi.NotImplemented implements P
         return new TagApiRestClient(gerritRestClient, tagInfoParser, this, ref);
     }
 
+    @Override
+    public CommitApi commit(String commitId) throws RestApiException {
+        return new CommitApiRestClient(gerritRestClient, commitInfoParser, this, commitId);
+    }
     private List<TagInfo> getTagInfos(ListRefsRequest<TagInfo> lrr) throws RestApiException {
         String request = projectsUrl() + tagsUrl(lrr);
         JsonElement tags = gerritRestClient.getRequest(request);
