@@ -20,6 +20,7 @@ import com.google.common.collect.Iterables;
 import com.google.gerrit.extensions.api.projects.BranchApi;
 import com.google.gerrit.extensions.api.projects.BranchInfo;
 import com.google.gerrit.extensions.api.projects.BranchInput;
+import com.google.gerrit.extensions.api.projects.ReflogEntryInfo;
 import com.google.gerrit.extensions.restapi.BinaryResult;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.Url;
@@ -29,6 +30,7 @@ import com.urswolfer.gerrit.client.rest.http.util.BinaryResultUtils;
 import org.apache.http.HttpResponse;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * @author Ingo Rissmann
@@ -36,15 +38,18 @@ import java.io.IOException;
 public class BranchApiRestClient extends BranchApi.NotImplemented implements BranchApi {
     private final GerritRestClient gerritRestClient;
     private final BranchInfoParser branchInfoParser;
+    private final ReflogParser refLogParser;
     private final ProjectApiRestClient projectApiRestClient;
     private final String name;
 
     public BranchApiRestClient(GerritRestClient gerritRestClient,
                                BranchInfoParser branchInfoParser,
+                               ReflogParser refLogParser,
                                ProjectApiRestClient projectApiRestClient,
                                String name) {
         this.gerritRestClient = gerritRestClient;
         this.branchInfoParser = branchInfoParser;
+        this.refLogParser = refLogParser;
         this.projectApiRestClient = projectApiRestClient;
         this.name = name;
     }
@@ -76,6 +81,17 @@ public class BranchApiRestClient extends BranchApi.NotImplemented implements Bra
             return BinaryResultUtils.createBinaryResult(response);
         } catch (IOException e) {
             throw new RestApiException("Failed to get file content.", e);
+        }
+    }
+
+    public List<ReflogEntryInfo> reflog() throws RestApiException {
+        String request = branchUrl() + "/reflog";
+        try {
+            JsonElement jsonElement = gerritRestClient.getRequest(request);
+            System.out.println(request + ": " + jsonElement.toString());
+            return refLogParser.parseRefLogs(jsonElement);
+        } catch (Exception e) {
+            throw new RestApiException("Failed to get ref log.", e);
         }
     }
 
