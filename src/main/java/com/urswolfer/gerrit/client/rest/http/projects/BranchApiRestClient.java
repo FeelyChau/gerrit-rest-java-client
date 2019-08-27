@@ -84,8 +84,11 @@ public class BranchApiRestClient extends BranchApi.NotImplemented implements Bra
         }
     }
 
-    public List<ReflogEntryInfo> reflog() throws RestApiException {
+    public List<ReflogEntryInfo> reflog(String queryStr) throws RestApiException {
         String request = branchUrl() + "/reflog";
+        if (queryStr != null && queryStr.length() > 0) {
+          request += "?" + queryStr;
+        }
         try {
             JsonElement jsonElement = gerritRestClient.getRequest(request);
             System.out.println(request + ": " + jsonElement.toString());

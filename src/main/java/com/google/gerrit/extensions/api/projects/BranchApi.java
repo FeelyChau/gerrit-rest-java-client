@@ -29,7 +29,7 @@ public interface BranchApi {
   /** Returns the content of a file from the HEAD revision. */
   BinaryResult file(String path) throws RestApiException;
 
-  List<ReflogEntryInfo> reflog() throws RestApiException;
+  List<ReflogEntryInfo> reflog(String queryStr) throws RestApiException;
 
   /**
    * A default implementation which allows source compatibility when adding new methods to the
@@ -57,7 +57,7 @@ public interface BranchApi {
     }
 
     @Override
-    public List<ReflogEntryInfo> reflog() throws RestApiException {
+    public List<ReflogEntryInfo> reflog(String queryStr) throws RestApiException {
       throw new NotImplementedException();
     }
   }
